@@ -5,6 +5,7 @@ import cors from "cors";
 dotenv.config();
 import userRoutes from './routes/userRoutes.js';
 import authRoutes from './routes/authRoutes.js';
+import itemRoutes from './routes/itemRoutes.js';
 
 mongoose.connect(process.env.MONGO).then(() => {
   console.log('Connected to MongoDB🥳🥳🚀');
@@ -23,3 +24,4 @@ app.listen(3000, () => {
 
 app.use('/api/user', userRoutes);
 app.use('/api/auth', authRoutes);
+app.use('/api/item', itemRoutes);

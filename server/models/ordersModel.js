@@ -41,6 +41,6 @@ const orderSchema = new mongoose.Schema({
 })
 
 const Order = mongoose.model("Order", orderSchema);
-const OrderedItemsSchema = mongoose.model('orderedItems', OrderedItemsSchema);
+const placedItem = mongoose.model('orderedItems', OrderedItemsSchema);
 
-export { Order, OrderedItemsSchema };
+export { Order, placedItem };
