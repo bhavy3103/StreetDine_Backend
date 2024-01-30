@@ -37,16 +37,22 @@ export const signin = async (req, res) => {
     if (!isPasswordValid)
       throw new Error("Invalid Password");
 
-    const token = jwt.sign({ userId: isUserValid._id },
-      process.env.JWT_SECRET_KEY, {
+    const tokenPayload = {
+      userId: isUserValid._id,
+      role: isUserValid.role,
+    };
+
+    const token = jwt.sign(tokenPayload, process.env.JWT_SECRET_KEY, {
       expiresIn: "1d",
     });
+
+    const decodedToken = jwt.verify(token, process.env.JWT_SECRET_KEY);
+    console.log(decodedToken.role);
+
     const { password: pass, ...rest } = isUserValid._doc;
     res.cookie('access_token', token, { httpOnly: true }).status(200).json(rest);
 
   } catch (error) {
     res.status(500).json(error.message);
-
   }
-
 }
