@@ -1,8 +1,24 @@
-# React + Vite
+# StreetDine_Backend-Task
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+# Install Dependencies
 
-Currently, two official plugins are available:
+**For Backend** - `npm i`
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+**For Frontend** - `cd client`  `npm i`
+
+## Env Variables
+
+Create a **.env** file in the root directory and add appropriate variables to use the app.
+
+**Essential Variables**
+
+MONGO = your DB_URI
+
+JWT_SECRET_KEY = your JWT Secret key
+
+## To Run Script
+
+**For Backend** - `npm run dev`
+
+**For Frontend** - `cd client` `npm run dev`
+
