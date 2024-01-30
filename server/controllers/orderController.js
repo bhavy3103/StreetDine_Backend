@@ -71,3 +71,35 @@ export const createOrder = async (req, res) => {
     res.status(500).json({ error: 'Internal Server Error' });
   }
 };
+
+
+export const myOrders = async (req, res) => {
+  try {
+    const userId = req.userId;
+
+    const orders = await Order.find({ user: userId });
+
+    res.status(200).json({ orders });
+  } catch (error) {
+    console.error(error, error.message);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
+
+
+export const getAllOrders = async (req, res) => {
+  try {
+    // Assuming you have some logic to check if the user is an admin
+    // You can adapt this based on your authentication and authorization logic
+    if (req.user.role !== 'admin') {
+      return res.status(403).json({ error: 'Forbidden - Admin access required' });
+    }
+
+    const allOrders = await Order.find().populate('user', 'username'); // Populate user details
+
+    res.status(200).json({ orders: allOrders });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+};

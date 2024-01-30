@@ -6,6 +6,8 @@ dotenv.config();
 import userRoutes from './routes/userRoutes.js';
 import authRoutes from './routes/authRoutes.js';
 import itemRoutes from './routes/itemRoutes.js';
+import cookieParser from 'cookie-parser';
+
 
 mongoose.connect(process.env.MONGO).then(() => {
   console.log('Connected to MongoDB🥳🥳🚀');
@@ -16,6 +18,8 @@ mongoose.connect(process.env.MONGO).then(() => {
 const app = express();
 app.use(cors());
 app.use(express.json());
+app.use(cookieParser());
+
 
 
 app.listen(3000, () => {
