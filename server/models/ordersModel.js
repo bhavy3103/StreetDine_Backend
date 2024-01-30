@@ -1,4 +1,5 @@
 import mongoose from "mongoose"
+import Item from "./ItemModel.js";
 
 const OrderedItemsSchema = new mongoose.Schema({
   item: {
@@ -16,10 +17,8 @@ const OrderedItemsSchema = new mongoose.Schema({
 })
 
 
-
-
 const orderSchema = new mongoose.Schema({
-  orderItems: [ItemsSchema],
+  orderItems: [OrderedItemsSchema],
   amount: {
     type: Number,
     required: true
@@ -41,6 +40,5 @@ const orderSchema = new mongoose.Schema({
 })
 
 const Order = mongoose.model("Order", orderSchema);
-const placedItem = mongoose.model('orderedItems', OrderedItemsSchema);
 
-export { Order, placedItem };
+export { Order };
