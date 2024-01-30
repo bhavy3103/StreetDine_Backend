@@ -4,7 +4,6 @@ import { Order } from "../models/ordersModel.js";
 import { Payment } from "../models/paymentModel.js";
 import User from "../models/userModel.js";
 import Item from "../models/ItemModel.js";
-
 export const createOrder = async (req, res) => {
   try {
     const { orderItems, amount, address, status, paymentMethod } = req.body;
@@ -33,6 +32,7 @@ export const createOrder = async (req, res) => {
         item: existingItem._id,
         quantity,
         price,
+        delivered: false,
       };
       orderedItems.push(orderedItem);
     }
@@ -47,22 +47,18 @@ export const createOrder = async (req, res) => {
 
     const savedOrder = await newOrder.save();
 
-    // Create a payment for the order
     const payment = new Payment({
       user: userId,
       order: savedOrder._id,
       amount,
       paymentMethod,
-      // Add additional fields related to payment if needed
     });
 
     const savedPayment = await payment.save();
 
-    // Update the order with the payment ID
     savedOrder.payment = savedPayment._id;
     await savedOrder.save();
 
-    // Update the user's orders array with the new order ID
     await User.findByIdAndUpdate(userId, { $push: { orders: savedOrder._id } });
 
     res.status(201).json({ message: "Order created successfully", order: savedOrder });
@@ -89,8 +85,7 @@ export const myOrders = async (req, res) => {
 
 export const getAllOrders = async (req, res) => {
   try {
-    // Assuming you have some logic to check if the user is an admin
-    // You can adapt this based on your authentication and authorization logic
+
     if (req.user.role !== 'admin') {
       return res.status(403).json({ error: 'Forbidden - Admin access required' });
     }
@@ -98,6 +93,44 @@ export const getAllOrders = async (req, res) => {
     const allOrders = await Order.find().populate('user', 'username'); // Populate user details
 
     res.status(200).json({ orders: allOrders });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
+
+
+export const updateOrder = async (req, res) => {
+  try {
+    const orderId = req.params.orderId;
+    const { status, amount, address, orderItems } = req.body;
+
+    if (!mongoose.Types.ObjectId.isValid(orderId)) {
+      return res.status(400).json({ error: `Invalid order ID: ${orderId}` });
+    }
+
+    const existingOrder = await Order.findById(orderId);
+
+    if (!existingOrder) {
+      return res.status(404).json({ error: `Order with ID ${orderId} not found` });
+    }
+
+    const hasDeliveredItems = existingOrder.orderItems.some(item => item.delivered);
+    if (hasDeliveredItems) {
+      return res.status(400).json({ error: 'Cannot update order with delivered items' });
+    }
+
+    existingOrder.status = status || existingOrder.status;
+    existingOrder.amount = amount || existingOrder.amount;
+    existingOrder.address = address || existingOrder.address;
+
+    if (orderItems && Array.isArray(orderItems)) {
+      existingOrder.orderItems = orderItems;
+    }
+
+    const updatedOrder = await existingOrder.save();
+
+    res.status(200).json({ message: 'Order updated successfully', order: updatedOrder });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Internal Server Error' });

@@ -14,6 +14,10 @@ const OrderedItemsSchema = new mongoose.Schema({
     type: Number,
     required: true,
   },
+  delivered: {
+    type: Boolean,
+    default: false, // Set default to false, indicating the item is not delivered initially
+  },
 });
 
 const orderSchema = new mongoose.Schema({
