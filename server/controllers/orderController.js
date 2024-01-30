@@ -1,28 +1,25 @@
-// Import necessary modules
+// controllers/orderController.js
+import mongoose from "mongoose";
 import { Order } from "../models/ordersModel.js";
+import { Payment } from "../models/paymentModel.js";
 import User from "../models/userModel.js";
 import Item from "../models/ItemModel.js";
-import mongoose from "mongoose";
 
-// Controller to handle order creation
 export const createOrder = async (req, res) => {
   try {
-    const { orderItems, amount, address, status } = req.body;
+    const { orderItems, amount, address, status, paymentMethod } = req.body;
 
-    // Assuming you have the user ID in the request (e.g., from authentication middleware)
     const userId = req.body.user._id;
 
     if (!userId) {
       return res.status(401).json({ error: 'User not authenticated' });
     }
-    console.log("userfound");
 
     const orderedItems = [];
 
     for (const orderItem of orderItems) {
       const { item, quantity, price } = orderItem;
 
-      // Check if the item is a valid ObjectId
       if (!mongoose.Types.ObjectId.isValid(item)) {
         return res.status(400).json({ error: `Invalid item ID: ${item}` });
       }
@@ -49,7 +46,21 @@ export const createOrder = async (req, res) => {
     });
 
     const savedOrder = await newOrder.save();
-    console.log("order saved", savedOrder);
+
+    // Create a payment for the order
+    const payment = new Payment({
+      user: userId,
+      order: savedOrder._id,
+      amount,
+      paymentMethod,
+      // Add additional fields related to payment if needed
+    });
+
+    const savedPayment = await payment.save();
+
+    // Update the order with the payment ID
+    savedOrder.payment = savedPayment._id;
+    await savedOrder.save();
 
     // Update the user's orders array with the new order ID
     await User.findByIdAndUpdate(userId, { $push: { orders: savedOrder._id } });

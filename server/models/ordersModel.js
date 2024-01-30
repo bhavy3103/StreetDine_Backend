@@ -1,4 +1,4 @@
-import mongoose from "mongoose"
+import mongoose from "mongoose";
 import Item from "./ItemModel.js";
 
 const OrderedItemsSchema = new mongoose.Schema({
@@ -14,18 +14,17 @@ const OrderedItemsSchema = new mongoose.Schema({
     type: Number,
     required: true,
   },
-})
-
+});
 
 const orderSchema = new mongoose.Schema({
   orderItems: [OrderedItemsSchema],
   amount: {
     type: Number,
-    required: true
+    required: true,
   },
   address: {
     type: String,
-    required: true
+    required: true,
   },
   status: {
     type: String,
@@ -34,10 +33,14 @@ const orderSchema = new mongoose.Schema({
   user: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
-  }
+  },
+  paymentStatus: {
+    type: String,
+    default: "unpaid", // Add a default value or adjust as needed
+  },
 }, {
-  timestamps: true
-})
+  timestamps: true,
+});
 
 const Order = mongoose.model("Order", orderSchema);
 
