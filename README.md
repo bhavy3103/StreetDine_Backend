@@ -7,7 +7,6 @@ This Node.js backend API offers strong features including order generation, upda
 
 **For Backend** - `npm i`
 
-**For Frontend** - `cd client`  `npm i`
 
 ## Env Variables
 
@@ -23,5 +22,4 @@ JWT_SECRET_KEY = your JWT Secret key
 
 **For Backend** - `npm run dev`
 
-**For Frontend** - `cd client` `npm run dev`
 
